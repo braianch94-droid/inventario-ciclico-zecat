@@ -48,7 +48,7 @@ if ($feriadosARG -contains $HoyFecha) {
 
 # ── PAUSA VACACIONES ─────────────────────────────────────────────
 $pausaDesde = [datetime]"2026-05-18"
-$pausaHasta = [datetime]"2026-05-26"
+$pausaHasta = [datetime]"2026-05-25"
 if ($hoy -ge $pausaDesde -and $hoy -le $pausaHasta) {
     Write-Host "PAUSA VACACIONES: $HoyFecha esta dentro del periodo $($pausaDesde.ToString('dd/MM/yyyy')) - $($pausaHasta.ToString('dd/MM/yyyy')). No se envia conteo."
     exit 0

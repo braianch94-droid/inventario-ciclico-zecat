@@ -41,7 +41,7 @@ if ($feriadosARG -contains $hoyStr) {
 
 # ── PAUSA VACACIONES ─────────────────────────────────────────────
 $pausaDesde = [datetime]"2026-05-18"
-$pausaHasta = [datetime]"2026-05-26"
+$pausaHasta = [datetime]"2026-05-25"
 if ($hoyDT -ge $pausaDesde -and $hoyDT -le $pausaHasta) {
     Write-Host "PAUSA VACACIONES: $hoyStr dentro del periodo de pausa. No se actualiza dashboard."
     exit 0
@@ -679,4 +679,28 @@ function toggleTheme(){
 $utf8NoBom = New-Object System.Text.UTF8Encoding $false
 [System.IO.File]::WriteAllText($HtmlFile, $html, $utf8NoBom)
 Write-Host "Dashboard guardado en: $HtmlFile"
+
+# ── PUBLICAR EN GITHUB ────────────────────────────────────────────
+Write-Host "Publicando dashboard en GitHub..."
+Push-Location $ScriptDir
+try {
+    $indexFile = Join-Path $ScriptDir "index.html"
+    Copy-Item $HtmlFile $indexFile -Force
+    git add "index.html" 2>$null
+    git diff --cached --quiet 2>$null
+    if ($LASTEXITCODE -ne 0) {
+        $fecha = (Get-Date).ToString("dd/MM/yyyy HH:mm")
+        git commit -m "dashboard: actualizar $fecha" 2>$null
+        git push 2>$null
+        Write-Host "Publicado en GitHub Pages."
+    } else {
+        Write-Host "Sin cambios nuevos para publicar."
+    }
+} catch {
+    Write-Host "AVISO: No se pudo publicar en GitHub. El dashboard local fue generado igual."
+} finally {
+    Pop-Location
+}
+# ─────────────────────────────────────────────────────────────────
+
 Write-Host "Listo!"
